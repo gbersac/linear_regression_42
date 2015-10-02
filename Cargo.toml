@@ -2,3 +2,6 @@
 name = "linear_regression"
 version = "0.1.0"
 authors = ["Guillaume Bersac <bersac_1@hotmail.fr>"]
+
+[dependencies]
+csv = "0.14.3"
