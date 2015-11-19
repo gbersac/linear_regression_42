@@ -33,3 +33,7 @@ pub fn add_col_one(mat: &DMat<f64>) -> DMat<f64> {
 	}
 	to_return
 }
+
+pub fn avg_mat(mat: &DMat<f64>) -> f64 {
+	sum_mat_cells(mat) / (mat.nrows() as f64)
+}

@@ -1,6 +1,9 @@
 extern crate nalgebra as na;
 extern crate csv;
 
+const LEARNING_RATE: f64 = 0.1;
+const THRESHOLD: f64 = 0.001;
+
 mod linear_regression;
 mod nalgebra;
 
@@ -46,7 +49,7 @@ fn main() {
 		match res {
 			Ok(s) => {
 				let (mileage, prices) = s;
-				let ln = LinearRegression::new(&mileage, &prices);
+				let ln = LinearRegression::new(&mileage, &prices, LEARNING_RATE, THRESHOLD);
 			},
 			Err(e) => {
 				println!("Cannot open file {}. Error {}", arg, e);
