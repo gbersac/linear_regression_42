@@ -1,7 +1,8 @@
+# example from http://www.johnwittenauer.net/machine-learning-exercises-in-python-part-1/
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import os
+import os, sys
 
 def computeCost(X, y, theta):
     inner = np.power(((X * theta.T) - y), 2)
@@ -14,48 +15,56 @@ def gradientDescent(X, y, theta, alpha, iters):
 
     for i in range(iters):
         error = (X * theta.T) - y
-
-        for j in range(parameters):
-            term = np.multiply(error, X[:,j])
-            temp[0,j] = theta[0,j] - ((alpha / len(X)) * np.sum(term))
-
-        theta = temp
+        blop = np.multiply(error, X[:, 1])
+        blop = np.prod(blop, axis = 1)
+        b = np.concatenate((error, blop), axis = 1)
+        theta = theta - ((alpha / len(X)) * np.sum(b, axis = 0))
         cost[i] = computeCost(X, y, theta)
 
     return theta, cost
 
+def dataOfCols(data, i):
+    return data[data.columns[i]]
+
+# set path
+path = os.getcwd() + '/'
+if len(sys.argv) > 1:
+    path += sys.argv[1]
+else:
+    path += 'example.csv'
+
 # get data
-path = os.getcwd() + '/data.csv'
-data = pd.read_csv(path, header=None, names=['Population', 'Profit'])
+data = pd.read_csv(path)
 
 data.insert(0, 'Ones', 1)
-
-alpha = 0.01
-iters = 1000
-
-# set X (training data) and y (target variable)
 cols = data.shape[1]
 X = data.iloc[:,0:cols-1]
 y = data.iloc[:,cols-1:cols]
 
 X = np.matrix(X.values)
 y = np.matrix(y.values)
+
+# variables for gradient descent
+alpha = 0.01
+iters = 100
 theta = np.matrix(np.array([0,0]))
 
+# compute gradient descent
+theta_result, cost = gradientDescent(X, y, theta, alpha, iters)
+print "Theta: ", theta_result
 print "Initial cost: ", computeCost(X, y, theta)
-
-g, cost = gradientDescent(X, y, theta, alpha, iters)
-print "Theta: ", g
-print "End cost:     ", computeCost(X, y, g)
+print "End cost:     ", computeCost(X, y, theta_result)
 
 # plotting data
-x = np.linspace(data.Population.min(), data.Population.max(), 100)
-f = g[0, 0] + (g[0, 1] * x)
+firstCol = dataOfCols(data, 1)
+secondCol = dataOfCols(data, 2)
+x = np.linspace(firstCol.min(), firstCol.max(), 100)
+f = theta_result[0, 0] + (theta_result[0, 1] * x)
 
-fig, ax = plt.subplots(figsize=(12,8))
-ax.plot(x, f, 'r', label='Prediction')
-ax.scatter(data.Population, data.Profit, label='Traning Data')
-ax.legend(loc=2)
+fig, ax = plt.subplots(figsize = (12, 8))
+ax.plot(x, f, 'r', label = 'Prediction')
+ax.scatter(firstCol, secondCol, label = 'Traning Data')
+ax.legend(loc = 2)
 ax.set_xlabel('Population')
 ax.set_ylabel('Profit')
 ax.set_title('Predicted Profit vs. Population Size')
