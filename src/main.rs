@@ -1,7 +1,7 @@
 extern crate nalgebra as na;
 extern crate csv;
 
-const LEARNING_RATE: f64 = 0.1;
+const LEARNING_RATE: f64 = 0.5;
 const THRESHOLD: f64 = 0.001;
 
 mod linear_regression;
@@ -50,6 +50,7 @@ fn main() {
 			Ok(s) => {
 				let (mileage, prices) = s;
 				let ln = LinearRegression::new(&mileage, &prices, LEARNING_RATE, THRESHOLD);
+				println!("result {:?}, average cost {}", ln.get_thetas(), ln.get_end_cost());
 			},
 			Err(e) => {
 				println!("Cannot open file {}. Error {}", arg, e);
