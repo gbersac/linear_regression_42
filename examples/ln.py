@@ -15,10 +15,11 @@ def gradientDescent(X, y, theta, alpha, iters):
 
     for i in range(iters):
         error = (X * theta.T) - y
-        blop = np.multiply(error, X[:, 1])
-        blop = np.prod(blop, axis = 1)
-        b = np.concatenate((error, blop), axis = 1)
-        theta = theta - ((alpha / len(X)) * np.sum(b, axis = 0))
+        sigma = np.multiply(error, X) # the sum parts of the formulas
+
+        # sigma[0,:] error
+        # sigma[1,:] error * milleage[i]
+        theta = theta - ((alpha / len(X)) * np.sum(sigma, axis = 0))
         cost[i] = computeCost(X, y, theta)
 
     return theta, cost
@@ -46,7 +47,7 @@ y = np.matrix(y.values)
 
 # variables for gradient descent
 alpha = 0.01
-iters = 100
+iters = 1000
 theta = np.matrix(np.array([0,0]))
 
 # compute gradient descent
