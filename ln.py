@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 # example from http://www.johnwittenauer.net/machine-learning-exercises-in-python-part-1/
 import numpy as np
 import pandas as pd
@@ -45,8 +47,19 @@ y = data.iloc[:,cols-1:cols]
 X = np.matrix(X.values)
 y = np.matrix(y.values)
 
+# minmax normalization
+print X
+Xs = X[:,1]
+xmin = Xs.min()
+xmax = Xs.max()
+print xmin, " ", xmax
+X = X.astype(float)
+X[:,1] = (Xs.astype(float) - float(xmin)) / (float(xmax) - float(xmin))
+print X
+
 # variables for gradient descent
-alpha = 0.01
+alpha = 0.9
+# alpha = 0.00000000015
 iters = 1000
 theta = np.matrix(np.array([0,0]))
 
@@ -57,8 +70,10 @@ print "Initial cost: ", computeCost(X, y, theta)
 print "End cost:     ", computeCost(X, y, theta_result)
 
 # plotting data
-firstCol = dataOfCols(data, 1)
+firstCol = np.array(X[:,1])
+print firstCol
 secondCol = dataOfCols(data, 2)
+print secondCol
 x = np.linspace(firstCol.min(), firstCol.max(), 100)
 f = theta_result[0, 0] + (theta_result[0, 1] * x)
 
@@ -66,7 +81,7 @@ fig, ax = plt.subplots(figsize = (12, 8))
 ax.plot(x, f, 'r', label = 'Prediction')
 ax.scatter(firstCol, secondCol, label = 'Traning Data')
 ax.legend(loc = 2)
-ax.set_xlabel('Population')
-ax.set_ylabel('Profit')
-ax.set_title('Predicted Profit vs. Population Size')
+ax.set_xlabel('Milleage')
+ax.set_ylabel('Price')
+ax.set_title('Predicted price vs. milleage')
 plt.show()
