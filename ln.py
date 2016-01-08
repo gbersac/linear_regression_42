@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import os, sys
+import fileinput
 
 def computeCost(X, y, theta):
     inner = np.power(((X * theta.T) - y), 2)
@@ -29,6 +30,11 @@ def gradientDescent(X, y, theta, alpha, iters):
 def dataOfCols(data, i):
     return data[data.columns[i]]
 
+def predict(data, xmin, xmax, theta):
+    #normalized data
+    normd =  (float(data) - float(xmin)) / (float(xmax) - float(xmin))
+    return theta[0, 0] + theta[0, 1] * normd
+
 # set path
 path = os.getcwd() + '/'
 if len(sys.argv) > 1:
@@ -48,14 +54,11 @@ X = np.matrix(X.values)
 y = np.matrix(y.values)
 
 # minmax normalization
-print X
 Xs = X[:,1]
 xmin = Xs.min()
 xmax = Xs.max()
-print xmin, " ", xmax
 X = X.astype(float)
 X[:,1] = (Xs.astype(float) - float(xmin)) / (float(xmax) - float(xmin))
-print X
 
 # variables for gradient descent
 alpha = 0.9
@@ -71,9 +74,7 @@ print "End cost:     ", computeCost(X, y, theta_result)
 
 # plotting data
 firstCol = np.array(X[:,1])
-print firstCol
 secondCol = dataOfCols(data, 2)
-print secondCol
 x = np.linspace(firstCol.min(), firstCol.max(), 100)
 f = theta_result[0, 0] + (theta_result[0, 1] * x)
 
@@ -85,3 +86,11 @@ ax.set_xlabel('Milleage')
 ax.set_ylabel('Price')
 ax.set_title('Predicted price vs. milleage')
 plt.show()
+
+while True:
+    line = input("prediction > ")
+    if type(line) == int or line.isdigit():
+        prediction = predict(int(line), xmin, xmax, theta_result)
+        print "The prediction for ", line, " is ", prediction
+    else:
+        print "Error: please enter an int."
